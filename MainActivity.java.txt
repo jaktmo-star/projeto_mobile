@@ -1,0 +1,93 @@
+package com.example.hamburgueriaz;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    int quantidade = 1;
+
+    TextView quantidadeText;
+    TextView resultadoPedido;
+
+    EditText nomeCliente;
+
+    CheckBox bacon;
+    CheckBox queijo;
+    CheckBox onion;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        quantidadeText = findViewById(R.id.quantidade_text);
+        resultadoPedido = findViewById(R.id.resultado_text);
+
+        nomeCliente = findViewById(R.id.nome_cliente);
+
+        bacon = findViewById(R.id.checkbox_bacon);
+        queijo = findViewById(R.id.checkbox_queijo);
+        onion = findViewById(R.id.checkbox_onion);
+    }
+
+    public void aumentar(View view) {
+        quantidade++;
+        quantidadeText.setText(String.valueOf(quantidade));
+    }
+
+    public void diminuir(View view) {
+        if (quantidade > 1) {
+            quantidade--;
+        }
+        quantidadeText.setText(String.valueOf(quantidade));
+    }
+
+    public void enviarPedido(View view) {
+
+        String nome = nomeCliente.getText().toString();
+
+        boolean adicionarBacon = bacon.isChecked();
+        boolean adicionarQueijo = queijo.isChecked();
+        boolean adicionarOnion = onion.isChecked();
+
+        int precoBase = 20;
+
+        if (adicionarBacon) {
+            precoBase += 5;
+        }
+
+        if (adicionarQueijo) {
+            precoBase += 3;
+        }
+
+        if (adicionarOnion) {
+            precoBase += 4;
+        }
+
+        int valorTotal = precoBase * quantidade;
+
+        String resumo = "Nome: " + nome +
+                "\nBacon: " + adicionarBacon +
+                "\nQueijo: " + adicionarQueijo +
+                "\nOnion Rings: " + adicionarOnion +
+                "\nQuantidade: " + quantidade +
+                "\nValor Total: R$ " + valorTotal;
+
+        resultadoPedido.setText(resumo);
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Pedido HamburgueriaZ");
+        intent.putExtra(Intent.EXTRA_TEXT, resumo);
+
+        startActivity(intent);
+    }
+}
